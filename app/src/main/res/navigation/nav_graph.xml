@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/SearchFragment">
+
+    <fragment
+        android:id="@+id/SearchFragment"
+        android:name="net.opengress.plantlookup.SearchFragment"
+        android:label="@string/search_fragment_label"
+        tools:layout="@layout/fragment_search">
+
+        <action
+            android:id="@+id/action_SearchFragment_to_DetailFragment"
+            app:destination="@id/DetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/DetailFragment"
+        android:name="net.opengress.plantlookup.DetailFragment"
+        android:label="@string/detail_fragment_label"
+        tools:layout="@layout/fragment_detail">
+
+        <action
+            android:id="@+id/action_DetailFragment_to_SearchFragment"
+            app:destination="@id/SearchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/UpdateFragment"
+        android:name="net.opengress.plantlookup.UpdateFragment"
+        android:label="@string/update_fragment_label"
+        tools:layout="@layout/fragment_update">
+    </fragment>
+</navigation>

@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Plant Lookup</string>
+    <string name="search_fragment_label">Plant Lookup</string>
+    <string name="detail_fragment_label" />
+    <string name="action_about">About</string>
+    <string name="year_license_info"><![CDATA[Copyright © 2023–2025. All rights reserved. Released under the <a href="https://chris-nz.com/plantlookup/license/">GNU Public License, Version 3.0</a>.]]></string>
+    <string name="author_chris">Author: Chris</string>
+    <string name="about_plant_lookup">About Plant Lookup</string>
+    <string name="about_description">This app is designed to help users quickly look up names for plants in New Zealand.</string>
+    <string name="about_website"><![CDATA[Visit the <a href="https://chris-nz.com/plantlookup/">official webpage</a> for more information.]]></string>
+    <string name="nvs_code">NVS Code</string>
+    <string name="family">Family</string>
+    <string name="genus">Genus</string>
+    <string name="species">Species</string>
+    <string name="flora_category">Flora Category</string>
+    <string name="growth_form">Growth Form</string>
+    <string name="threatened_status">Threatened Status</string>
+    <string name="action_update">Update</string>
+    <string name="update_fragment_label">Update</string>
+    <string name="download_amp_prepare_data"><![CDATA[Download & Prepare Data]]></string>
+    <string name="welcome_to_plant_lookup_this_app_needs_to_download_source_material_before_you_can_use_it">Welcome to Plant Lookup. This app needs to download source material before you can use it.</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="fetch_updates">Fetch updates</string>
+    <string name="press_below_to_download_any_available_updates">Press below to download any available updates.</string>
+</resources>
