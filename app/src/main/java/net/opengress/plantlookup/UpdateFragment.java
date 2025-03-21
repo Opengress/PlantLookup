@@ -48,6 +48,7 @@ public class UpdateFragment extends Fragment {
 
         view.findViewById(R.id.update_button).setOnClickListener(v -> {
             prefs.edit().putBoolean("db_setup_in_progress", true).apply();
+            prefs.edit().putLong("version_warning_snoozed", 0).apply();
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(() -> {
                 try {

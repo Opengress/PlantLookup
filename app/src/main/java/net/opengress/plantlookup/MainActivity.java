@@ -7,7 +7,10 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
@@ -35,7 +38,6 @@ import net.opengress.plantlookup.databinding.ActivityMainBinding;
 import net.opengress.plantlookup.utils.ProgressCallback;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,16 +46,91 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private boolean doubleBackToExitPressedOnce = false;
     SharedPreferences prefs;
+    private static final String PREFS_NAME = "AppPrefs";
+    private static final String PREF_DISMISSED = "version_warning_dismissed";
+    private static final String PREF_SNOOZED = "version_warning_snoozed";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        showAppUpdateAlert();
 
         if (!DatabaseManager.getFile().exists() || prefs.getBoolean("db_setup_in_progress", false)) {
             showFirstRunScreen();
         } else {
             showMainUI();
+        }
+    }
+
+    private void showActualAlert() {
+
+        var builder = new AlertDialog.Builder(this);
+        TextView messageView = new TextView(this);
+        var message = getString(R.string.last_play_store_version);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            messageView.setText(Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            messageView.setText(Html.fromHtml(message));
+        }
+        messageView.setMovementMethod(LinkMovementMethod.getInstance());
+        messageView.setPadding(40, 20, 40, 20); // Optional padding for better UI
+        builder.setTitle("Important Update Information")
+                .setView(messageView)
+                .setPositiveButton("Visit website", (dialog, which) -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://chris-nz.com/plantlookup/"));
+                    startActivity(browserIntent);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Minimise notice", (dialog, which) -> {
+                    prefs.edit().putBoolean(PREF_DISMISSED, true).apply();
+                    showUpdateSnackbar();
+                    dialog.dismiss();
+                })
+                .setNeutralButton("Remind me", (dialog, which) -> {
+                    prefs.edit().putLong(PREF_SNOOZED, System.currentTimeMillis() + (72 * 60 * 60 * 1000)).apply();
+                    dialog.dismiss();
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void showUpdateSnackbar() {
+        View rootView = findViewById(android.R.id.content);
+        Snackbar snackbar = Snackbar.make(rootView,
+                        "This is the final Play Store version.", Snackbar.LENGTH_INDEFINITE)
+                .setAction("More Info", v -> {
+                    // Reopen the dialog
+                    prefs.edit().putBoolean(PREF_DISMISSED, false).apply();
+                    showAppUpdateAlert();
+                });
+
+        snackbar.show();
+    }
+
+    private void showAppUpdateAlert() {
+        boolean dismissed = prefs.getBoolean(PREF_DISMISSED, false);
+        long lastSeen = prefs.getLong(PREF_SNOOZED, 0);
+        long currentTime = System.currentTimeMillis();
+
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+        Log.d("UpdateAlert", "dismissed: " + dismissed + ", lastSeen: " + lastSeen + ", currentTime: " + currentTime);
+
+        if (dismissed) {
+            Log.d("UpdateAlert", "Showing snackbar");
+            showUpdateSnackbar();
+        } else if (currentTime - lastSeen > 72 * 60 * 60 * 1000) {
+            showActualAlert();
+        } else {
+            Log.d("UpdateAlert", "Conditions not met for snackbar or alert");
         }
     }
 
@@ -167,7 +244,16 @@ public class MainActivity extends AppCompatActivity {
         this.doubleBackToExitPressedOnce = true;
 
         // if we're on the main screen, with empty search box, and this is our first time pressing back, prompt the user
-        Snackbar.make(findViewById(android.R.id.content), "Really exit?", Snackbar.LENGTH_SHORT).setAction("YES", v -> super.onBackPressed()).show();
+        var snackbar = Snackbar.make(findViewById(android.R.id.content), "Really exit?", Snackbar.LENGTH_SHORT).setAction("YES", v -> super.onBackPressed());
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                if (!isFinishing()) {
+                    showUpdateSnackbar();
+                }
+            }
+        });
+        snackbar.show();
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000); // Reset the double back press flag after 2 seconds
     }
 

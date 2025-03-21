@@ -7,7 +7,7 @@
     <string name="author_chris">Author: Chris</string>
     <string name="about_plant_lookup">About Plant Lookup</string>
     <string name="about_description">This app is designed to help users quickly look up names for plants in New Zealand.</string>
-    <string name="about_website"><![CDATA[Visit the <a href="https://chris-nz.com/plantlookup/">official webpage</a> for more information.]]></string>
+    <string name="about_website"><![CDATA[Visit the <a href="https://chris-nz.com/plantlookup/">official webpage</a> for updates and further information.]]></string>
     <string name="nvs_code">NVS Code</string>
     <string name="family">Family</string>
     <string name="genus">Genus</string>
@@ -22,4 +22,10 @@
     <string name="check_for_updates">Check for updates</string>
     <string name="fetch_updates">Fetch updates</string>
     <string name="press_below_to_download_any_available_updates">Press below to download any available updates.</string>
+    <string name="last_play_store_version"><![CDATA[
+    <p><strong>This is the last Play Store version.<br>For future updates, please visit <a href="https://chris-nz.com/plantlookup/">the official website</a>.</strong></p>
+    <p>
+    I\'ve made the decision to remove everything from Play Store due to privacy and security concerns. To provide a safer and more private experience for everyone, future updates will only be available through the website.
+    </p>
+]]></string>
 </resources>
