@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UpdateFragment extends Fragment {
 
@@ -43,9 +44,7 @@ public class UpdateFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_update, container, false);
 
-        Date local = DatabaseManager.getLastUpdateTime();
-        String localStr = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(local);
-        view.<TextView>findViewById(R.id.update_status_text).setText(format("Your database was last updated {0}. Press below to download any available updates.", localStr));
+        AtomicReference<Date> local = new AtomicReference<>(updateTimestampView(view));
 
         view.findViewById(R.id.update_button).setOnClickListener(v -> {
             prefs.edit().putBoolean("db_setup_in_progress", true).apply();
@@ -54,7 +53,7 @@ public class UpdateFragment extends Fragment {
                 try {
                     Date remote = getLastModifiedHeader("https://nvs.landcareresearch.co.nz/Content/CurrentNVSNames.csv");
 
-                    if (remote.before(local)) {
+                    if (remote.before(local.get())) {
                         String remoteStr = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(remote);
                         alert(format("Your data is up to date! No update available since {0}.", remoteStr));
                     } else {
@@ -66,6 +65,7 @@ public class UpdateFragment extends Fragment {
                         requireActivity().runOnUiThread(() -> {
                             requireActivity().findViewById(R.id.update_progress).setVisibility(INVISIBLE);
                             prefs.edit().remove("db_setup_in_progress").apply();
+                            local.set(updateTimestampView(view));
                             alert("The update completed successfully.");
                         });
                     }
@@ -79,6 +79,14 @@ public class UpdateFragment extends Fragment {
             });
         });
         return view;
+    }
+
+    @NonNull
+    private static Date updateTimestampView(@NonNull View view) {
+        Date local = DatabaseManager.getLastUpdateTime();
+        String localStr = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(local);
+        view.<TextView>findViewById(R.id.update_status_text).setText(format("Your database was last updated {0}. Press below to download any available updates.", localStr));
+        return local;
     }
 
     private void alert(String message) {
